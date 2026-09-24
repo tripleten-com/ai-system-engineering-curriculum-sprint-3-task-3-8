@@ -1,0 +1,79 @@
+# Coldline - Task 3.8
+# File: submission.yaml
+# Component: Student answer sheet
+# Purpose: Record the commits and observed versions from your own GitOps loops, and the structured platform comparison.
+# Interacts With: Submission schema, public verifier, GitOps contract checks, protected answer key
+# Sprint/Task: Sprint 3 - Project 3 / Task 3.8
+# Concepts: GitOps, desired state, drift, rollback by revert, platform comparison
+# Tools: YAML
+
+# Complete submission.yaml from your own runs and the sources named beside each answer group.
+# Keep the supplied keys; replace empty strings, zeros, and empty lists using each field's
+# stated type. Empty values and placeholder text fail verification.
+# Use submission-sample.yaml for format only; do not copy its fictional values.
+# Do not include secrets, personal data, or local absolute paths.
+
+answers:
+  # Task 3.8 — Step 1: Roll out the candidate by commit
+  # Source: `git rev-parse HEAD` after the rollout commit (the full 40-character SHA, not a
+  # short form), and the `build_version` the first probe reported in the `poe reconcile`
+  # record for that commit.
+  rollout_commit: ""
+  rollout_observed_version: ""
+
+  # Task 3.8 — Step 2: Catch and correct a change made by hand
+  # Source: the first `poe reconcile-check` output after your hand change. List every dotted
+  # key it reported under `differences`, as strings, for example `worker.replicas`.
+  drift_fields: []
+
+  # Task 3.8 — Step 3: Roll back with a revert
+  # Source: the revert commit's full SHA from `git rev-parse HEAD`, and the `build_version`
+  # the first probe reported in the `poe reconcile` record for that commit.
+  rollback_commit: ""
+  rollback_observed_version: ""
+
+  # Task 3.8 — Step 4: Set the restart policy and replica count by commit
+  # Source: the values you committed in deploy/desired-state.yaml at HEAD, confirmed by
+  # `docker compose ps` (a whole number of worker containers, at least 2) and by the
+  # restart policy `docker inspect` reports (HostConfig.RestartPolicy.Name) on each of them.
+  # One of no, always, on-failure, unless-stopped; quote "no" so YAML keeps it a string.
+  worker_replicas: 0
+  worker_restart_policy: ""
+
+  # Task 3.8 — Step 5: Compare the loop with Kubernetes, Argo CD, EKS and ECS
+  # Source: each platform's documented behavior, matched against what you just ran.
+  # desired_state_source: git | cluster_api | service_definition
+  #   where the platform itself reads the desired state from.
+  # drift_correction: continuous | on_command | none
+  #   whether it keeps comparing running state with desired state and corrects it by
+  #   itself, only when someone runs a command (as `poe reconcile` does), or not at all.
+  # rollback_by: git_revert | revision_history | previous_definition
+  #   how a rollback is expressed.
+  # note: at most 300 characters, in Elena's terms: what this answer means for on-call
+  #   and the dispatch floor, not what the platform is called.
+  platform_comparison:
+    kubernetes_deployment:
+      desired_state_source: ""
+      drift_correction: ""
+      rollback_by: ""
+      note: ""
+    argo_cd:
+      desired_state_source: ""
+      drift_correction: ""
+      rollback_by: ""
+      note: ""
+    eks:
+      desired_state_source: ""
+      drift_correction: ""
+      rollback_by: ""
+      note: ""
+    ecs:
+      desired_state_source: ""
+      drift_correction: ""
+      rollback_by: ""
+      note: ""
+
+  # At most 600 characters: which platform you would tell Elena gives her the loop as she
+  # described it, which would need the team to bring the loop, and one limit of what your
+  # Compose run proves about any of them.
+  recommendation: ""

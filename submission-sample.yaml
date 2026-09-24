@@ -1,0 +1,47 @@
+# Coldline - Task 3.8
+# File: submission-sample.yaml
+# Component: Fictional completed answer sheet
+# Purpose: Show the accepted shape.
+# Interacts With: docs/contracts/submission.schema.json
+# Sprint/Task: Sprint 3 - Project 3 / Task 3.8
+# Concepts: Answer-sheet shape
+# Tools: YAML
+
+# Complete submission.yaml from your own runs and the sources named beside each answer group.
+# Keep the supplied keys; replace empty strings, zeros, and empty lists using each field's
+# stated type. Empty values and placeholder text fail verification.
+# Use submission-sample.yaml for format only; do not copy its fictional values.
+# Do not include secrets, personal data, or local absolute paths.
+# This fictional sample is not a result to submit; an exact copy is rejected.
+
+answers:
+  rollout_commit: "9f8e7d6c5b4a39281706f5e4d3c2b1a0f9e8d7c6"
+  rollout_observed_version: "9.8.8"
+  drift_fields:
+    - "api.restart_policy"
+  rollback_commit: "0a1b2c3d4e5f60718293a4b5c6d7e8f901234567"
+  rollback_observed_version: "9.8.7"
+  worker_replicas: 3
+  worker_restart_policy: "always"
+  platform_comparison:
+    kubernetes_deployment:
+      desired_state_source: "service_definition"
+      drift_correction: "none"
+      rollback_by: "git_revert"
+      note: "Fictional: on-call would read the desired state from the platform's own service, and nothing corrects a hand change."
+    argo_cd:
+      desired_state_source: "cluster_api"
+      drift_correction: "on_command"
+      rollback_by: "previous_definition"
+      note: "Fictional: someone on call runs a command to correct drift, and a rollback points at an earlier definition."
+    eks:
+      desired_state_source: "git"
+      drift_correction: "continuous"
+      rollback_by: "revision_history"
+      note: "Fictional: the loop closes itself, so dispatchers never wait on an engineer to notice a hand change."
+    ecs:
+      desired_state_source: "git"
+      drift_correction: "none"
+      rollback_by: "git_revert"
+      note: "Fictional: a reviewed commit describes the worker, but nobody corrects the running stack toward it."
+  recommendation: "Fictional: EKS gives Elena the loop as she described it; the other three would need the team to bring it. One limit of the Compose run: it proves the loop on one host with one operator, not how any managed platform behaves under real load."

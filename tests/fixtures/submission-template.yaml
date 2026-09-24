@@ -1,0 +1,40 @@
+# Coldline - Task 3.8
+# File: submission-template.yaml
+# Component: Public verifier fixture
+# Purpose: Exercise the shipped, blank answer sheet inside the public test suite.
+# Interacts With: tests/contract/test_submission.py
+# Sprint/Task: Sprint 3 - Project 3 / Task 3.8
+# Concepts: Deterministic assessment, blank-sheet rejection
+# Tools: YAML
+
+# The shipped submission.yaml, byte-for-byte in shape: every value blank, zero, or empty.
+answers:
+  rollout_commit: ""
+  rollout_observed_version: ""
+  drift_fields: []
+  rollback_commit: ""
+  rollback_observed_version: ""
+  worker_replicas: 0
+  worker_restart_policy: ""
+  platform_comparison:
+    kubernetes_deployment:
+      desired_state_source: ""
+      drift_correction: ""
+      rollback_by: ""
+      note: ""
+    argo_cd:
+      desired_state_source: ""
+      drift_correction: ""
+      rollback_by: ""
+      note: ""
+    eks:
+      desired_state_source: ""
+      drift_correction: ""
+      rollback_by: ""
+      note: ""
+    ecs:
+      desired_state_source: ""
+      drift_correction: ""
+      rollback_by: ""
+      note: ""
+  recommendation: ""

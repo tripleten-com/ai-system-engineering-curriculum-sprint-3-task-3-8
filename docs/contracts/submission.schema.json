@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Coldline Task 3.8 public answer contract. Two commit identities and two observed build versions from the student's own rollout and revert, the dotted desired-state keys one drift check reported, the worker replica count and restart policy committed at HEAD, and a structured comparison of four platforms. The GitOps contract checks compare the commits and the worker settings with the branch history, the committed desired state, and the running stack; the protected check compares the observed versions and the platform enumerations with the answer key. There is no self-attestation field, no pass boolean, and no recording URL.",
+  "title": "Coldline Task 3.8 answers",
+  "description": "Rollout and rollback commits, observed versions, reported drift, committed worker settings, and the platform comparison.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["answers"],
+  "properties": {
+    "answers": {
+      "description": "The only top-level answer mapping accepted by the public verifier.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rollout_commit",
+        "rollout_observed_version",
+        "drift_fields",
+        "rollback_commit",
+        "rollback_observed_version",
+        "worker_replicas",
+        "worker_restart_policy",
+        "platform_comparison",
+        "recommendation"
+      ],
+      "properties": {
+        "rollout_commit": {
+          "description": "The full 40-character SHA of the commit that changed release_tag to the candidate, from your own branch.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "rollout_observed_version": {
+          "description": "The build_version the first probe reported in the poe reconcile record for the rollout commit.",
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "drift_fields": {
+          "description": "Every dotted desired-state key the first poe reconcile-check reported in Step 2.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["release_tag", "api.restart_policy", "worker.restart_policy", "worker.replicas"]
+          }
+        },
+        "rollback_commit": {
+          "description": "The full 40-character SHA of the revert commit, from your own branch.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "rollback_observed_version": {
+          "description": "The build_version the first probe reported in the poe reconcile record for the revert commit.",
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "worker_replicas": {
+          "description": "The worker replica count committed at HEAD and listed by docker compose ps.",
+          "type": "integer",
+          "minimum": 2
+        },
+        "worker_restart_policy": {
+          "description": "The worker restart policy committed at HEAD and reported by docker inspect on each worker container.",
+          "enum": ["no", "always", "on-failure", "unless-stopped"]
+        },
+        "platform_comparison": {
+          "description": "One entry per platform, every enumerated field from its allowed values, and a note in Elena's terms.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kubernetes_deployment", "argo_cd", "eks", "ecs"],
+          "properties": {
+            "kubernetes_deployment": {"$ref": "#/$defs/platform"},
+            "argo_cd": {"$ref": "#/$defs/platform"},
+            "eks": {"$ref": "#/$defs/platform"},
+            "ecs": {"$ref": "#/$defs/platform"}
+          }
+        },
+        "recommendation": {
+          "description": "Which platform gives Elena the loop as she described it, which would need the team to bring it, and one limit of what the Compose run proves.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        }
+      }
+    }
+  },
+  "$defs": {
+    "platform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["desired_state_source", "drift_correction", "rollback_by", "note"],
+      "properties": {
+        "desired_state_source": {
+          "description": "Where the platform itself reads the desired state from.",
+          "enum": ["git", "cluster_api", "service_definition"]
+        },
+        "drift_correction": {
+          "description": "Whether the platform corrects drift by itself, only on a command, or not at all.",
+          "enum": ["continuous", "on_command", "none"]
+        },
+        "rollback_by": {
+          "description": "How a rollback is expressed on this platform.",
+          "enum": ["git_revert", "revision_history", "previous_definition"]
+        },
+        "note": {
+          "description": "What this answer means for on-call and the dispatch floor.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      }
+    }
+  }
+}

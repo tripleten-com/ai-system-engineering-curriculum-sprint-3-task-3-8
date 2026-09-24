@@ -1,0 +1,38 @@
+# Coldline - Task 3.8
+# File: deploy/desired-state.yaml
+# Component: Committed desired state
+# Purpose: Declare which release the API, worker, and initializer run, how many worker replicas run, and which restart policy the API and worker containers carry.
+# Interacts With: infra/gitops/reconcile.py, compose.yaml, infra/release/manifest.yaml
+# Sprint/Task: Sprint 3 - Project 3 / Task 3.8
+# Concepts: GitOps, desired state, drift, reconciliation
+# Tools: YAML, Docker Compose
+
+# What should be running is whatever this file says at git HEAD, the latest commit on
+# your branch. The reconciler reads it with `git show HEAD:deploy/desired-state.yaml`,
+# never from your working tree, so an uncommitted edit changes nothing. This is the only
+# file you change to change the stack. Keep every key below; change only the values.
+
+# The manifest release every first-party service runs: `api`, `worker`, and the
+# `initializer`, which runs the api image. The value must be a tag that
+# infra/release/manifest.yaml names: "3.1.0" (known good) or "3.1.1" (candidate).
+# `poe release-build` builds both from this source so the reconciler can select either.
+release_tag: "3.1.0"
+
+api:
+  # What Docker does when the api container exits. One of:
+  #   "no"             never restart it; it stays exited until someone starts it.
+  #   always           restart it whenever it exits, whatever the exit code, and start it
+  #                    again when the Docker daemon restarts, even after a manual stop.
+  #   on-failure       restart it only when it exits with a non-zero code; a clean exit
+  #                    (code 0) stays exited.
+  #   unless-stopped   like always, except a container that was stopped by hand stays
+  #                    stopped, including across a daemon restart.
+  # Quote "no": unquoted, YAML reads it as the boolean false.
+  restart_policy: unless-stopped
+
+worker:
+  # Same four policies, same meaning, applied to every worker container.
+  restart_policy: unless-stopped
+  # How many worker containers Compose runs (`--scale worker=N`). Every replica consumes
+  # the same SQS queue; a whole number of at least 1.
+  replicas: 1
