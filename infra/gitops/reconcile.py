@@ -207,6 +207,29 @@ def restart_policies(container_names: list[str]) -> list[str]:
     return policies
 
 
+def image_references(container_names: list[str]) -> list[str]:
+    """Return the image reference each named container was created from.
+
+    `docker compose ps` prints a bare image id once the tag a container was created from
+    has moved to a newer build, which `poe release-build` does on a first run. The
+    container's `Config.Image` keeps the reference it was created from, so the tag
+    comparison stays about which release was requested, not which build carries a tag.
+    """
+    if not container_names:
+        return []
+    inspected = subprocess.run(
+        ["docker", "inspect", *container_names],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if inspected.returncode != 0:
+        raise ReconcileError(f"docker inspect failed: {inspected.stderr.strip()}")
+    return [
+        str(details.get("Config", {}).get("Image", "")) for details in json.loads(inspected.stdout)
+    ]
+
+
 def observe() -> dict[str, Any]:
     """Read the running stack: image tag per service, restart policies, worker replicas."""
     records = compose_records()
@@ -215,10 +238,8 @@ def observe() -> dict[str, Any]:
         by_service.setdefault(str(record.get("Service")), []).append(record)
     tags: dict[str, list[str]] = {}
     for service in RELEASE_SERVICES:
-        images = {
-            str(entry.get("Image", "")).rsplit(":", maxsplit=1)[-1]
-            for entry in by_service.get(service, [])
-        }
+        names = [str(entry["Name"]) for entry in by_service.get(service, [])]
+        images = {reference.rsplit(":", maxsplit=1)[-1] for reference in image_references(names)}
         tags[service] = sorted(images)
     policies: dict[str, list[str]] = {}
     for service in POLICY_SERVICES:
