@@ -33,10 +33,10 @@ RECORD = "docs/student/task-3-8-gitops-record.md"
 def _platform(**overrides: Any) -> dict[str, Any]:
     """Return one well-formed platform entry."""
     entry: dict[str, Any] = {
-        "desired_state_source": "git",
-        "drift_correction": "on_command",
-        "rollback_by": "git_revert",
-        "note": "A reviewed commit is the change; on-call reads the loop, not a terminal.",
+        "desired_state_source": "service_definition",
+        "drift_correction": "none",
+        "rollback_by": "previous_definition",
+        "note": "Fictional format example; it states no platform's real behavior.",
     }
     entry.update(overrides)
     return entry
@@ -54,23 +54,13 @@ def valid_answers(**overrides: Any) -> dict[str, object]:
         "worker_restart_policy": "on-failure",
         "platform_comparison": {
             "kubernetes_deployment": _platform(
-                desired_state_source="cluster_api",
-                drift_correction="continuous",
-                rollback_by="revision_history",
+                desired_state_source="git", rollback_by="git_revert"
             ),
             "argo_cd": _platform(),
-            "eks": _platform(
-                desired_state_source="cluster_api",
-                drift_correction="continuous",
-                rollback_by="revision_history",
-            ),
-            "ecs": _platform(
-                desired_state_source="service_definition",
-                drift_correction="continuous",
-                rollback_by="previous_definition",
-            ),
+            "eks": _platform(desired_state_source="git", rollback_by="git_revert"),
+            "ecs": _platform(desired_state_source="git", rollback_by="revision_history"),
         },
-        "recommendation": "Argo CD gives the loop; the others need the team to bring it.",
+        "recommendation": "Fictional format example; it recommends nothing.",
     }
     answers.update(overrides)
     return {"answers": answers}
