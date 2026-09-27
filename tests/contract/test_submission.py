@@ -44,12 +44,13 @@ def _platform(**overrides: Any) -> dict[str, Any]:
 
 def valid_answers(**overrides: Any) -> dict[str, object]:
     """Return a complete answer sheet in the published shape."""
+    # Fictional format example: these values show the shape and state no result.
     answers: dict[str, Any] = {
         "rollout_commit": "1" * 40,
-        "rollout_observed_version": "3.1.1",
+        "rollout_observed_version": "4.2.1",
         "drift_fields": ["release_tag", "worker.replicas"],
         "rollback_commit": "2" * 40,
-        "rollback_observed_version": "3.1.0",
+        "rollback_observed_version": "4.2.0",
         "worker_replicas": 2,
         "worker_restart_policy": "on-failure",
         "platform_comparison": {
