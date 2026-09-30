@@ -18,27 +18,29 @@ answers:
   # Source: `git rev-parse HEAD` after the rollout commit (the full 40-character SHA, not a
   # short form), and the `build_version` the first probe reported in the `poe reconcile`
   # record for that commit.
-  rollout_commit: ""
-  rollout_observed_version: ""
+  rollout_commit: "08f9b0129f1049caf1d8fa1fb12a0782df69a358"
+  rollout_observed_version: "3.1.1"
 
   # Task 3.8 — Step 2: Catch and correct a change made by hand
   # Source: the first `poe reconcile-check` output after your hand change. List every dotted
   # key it reported under `differences`, as strings, for example `worker.replicas`.
-  drift_fields: []
+  drift_fields:
+    - "release_tag"
+    - "worker.replicas"
 
   # Task 3.8 — Step 3: Roll back with a revert
   # Source: the revert commit's full SHA from `git rev-parse HEAD`, and the `build_version`
   # the first probe reported in the `poe reconcile` record for that commit.
-  rollback_commit: ""
-  rollback_observed_version: ""
+  rollback_commit: "af041c38c1e3a3d27fe02aa1e375d6854e261705"
+  rollback_observed_version: "3.1.0"
 
   # Task 3.8 — Step 4: Set the restart policy and replica count by commit
   # Source: the values you committed in deploy/desired-state.yaml at HEAD, confirmed by
   # `docker compose ps` (a whole number of worker containers, at least 2) and by the
   # restart policy `docker inspect` reports (HostConfig.RestartPolicy.Name) on each of them.
   # One of no, always, on-failure, unless-stopped; quote "no" so YAML keeps it a string.
-  worker_replicas: 0
-  worker_restart_policy: ""
+  worker_replicas: 2
+  worker_restart_policy: "on-failure"
 
   # Task 3.8 — Step 5: Compare the loop with Kubernetes, Argo CD, EKS and ECS
   # Source: each platform's documented behavior, matched against what you just ran.
@@ -53,27 +55,27 @@ answers:
   #   and the dispatch floor, not what the platform is called.
   platform_comparison:
     kubernetes_deployment:
-      desired_state_source: ""
-      drift_correction: ""
-      rollback_by: ""
-      note: ""
+      desired_state_source: "cluster_api"
+      drift_correction: "continuous"
+      rollback_by: "revision_history"
+      note: "A dead worker is replaced by itself, so dispatchers keep getting summaries without a page. But a 2am fix is typed into the cluster object and nobody reviewed it, so Wednesday's question is still answered by reading the cluster, not a diff."
     argo_cd:
-      desired_state_source: ""
-      drift_correction: ""
-      rollback_by: ""
-      note: ""
+      desired_state_source: "git"
+      drift_correction: "continuous"
+      rollback_by: "git_revert"
+      note: "Closest to what Elena asked for. The reviewed commit is the source, the tool keeps pulling the worker back to it, so a hand change is undone without on-call typing anything, and putting a release back is the same revert as rolling it out."
     eks:
-      desired_state_source: ""
-      drift_correction: ""
-      rollback_by: ""
-      note: ""
+      desired_state_source: "cluster_api"
+      drift_correction: "continuous"
+      rollback_by: "revision_history"
+      note: "Managed control plane, same answer as plain Kubernetes for on-call: AWS keeps the workers running, but nobody is handed git as the record. The team still has to add the reviewed-commit loop before dispatchers get a traceable version."
     ecs:
-      desired_state_source: ""
-      drift_correction: ""
-      rollback_by: ""
-      note: ""
+      desired_state_source: "service_definition"
+      drift_correction: "continuous"
+      rollback_by: "previous_definition"
+      note: "ECS holds the task count up, so a worker that dies mid-summary is replaced without a page. The version record is a task definition revision inside AWS, not a commit someone reviewed, and going back means pointing at an older revision."
 
   # At most 600 characters: which platform you would tell Elena gives her the loop as she
   # described it, which would need the team to bring the loop, and one limit of what your
   # Compose run proves about any of them.
-  recommendation: ""
+  recommendation: "Argo CD is the one that gives Elena the loop as she described it: the reviewed commit is the source and the tool pulls the running stack back to it. Kubernetes Deployments, EKS and ECS all keep workers alive and all hold a version record, but that record is a cluster object or a task definition, not a reviewed commit, so the team must bring the git half itself. One limit: my run proves the loop on one Compose host, with me running poe reconcile by hand, over the four keys the file declares; it proves nothing about how any of these four platforms behaves."
