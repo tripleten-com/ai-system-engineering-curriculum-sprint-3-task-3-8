@@ -32,7 +32,7 @@ api:
 
 worker:
   # Same four policies, same meaning, applied to every worker container.
-  restart_policy: unless-stopped
+  restart_policy: on-failure
   # How many worker containers Compose runs (`--scale worker=N`). Every replica consumes
   # the same SQS queue; a whole number of at least 1.
-  replicas: 1
+  replicas: 2
