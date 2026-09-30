@@ -7,6 +7,14 @@
 # Concepts: GitOps, desired state, drift, reconciliation
 # Tools: YAML, Docker Compose
 
+# Never exported. Known-wrong variant: the final desired state is byte-for-byte the
+# reference completion's, and so is the record. What is wrong is how the rollback commit
+# was made: qualify_sprint_3.py's gitops runner, for this variant, rolls back by writing the
+# known-good tag back into the file and committing it as a fresh change instead of running
+# `git revert`. The file contents come out identical to a revert's, so every other check
+# passes; only the "rollback_commit is a revert of rollout_commit" check must fail, because
+# the commit's message carries no `This reverts commit <rollout>` line.
+
 # What should be running is whatever this file says at git HEAD, the latest commit on
 # your branch. The reconciler reads it with `git show HEAD:deploy/desired-state.yaml`,
 # never from your working tree, so an uncommitted edit changes nothing. This is the only
