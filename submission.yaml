@@ -18,7 +18,7 @@ answers:
   # Source: `git rev-parse HEAD` after the rollout commit (the full 40-character SHA, not a
   # short form), and the `build_version` the first probe reported in the `poe reconcile`
   # record for that commit.
-  rollout_commit: "08f9b0129f1049caf1d8fa1fb12a0782df69a358"
+  rollout_commit: "86f4aa01c286886a6681ff43d7fd879074d39c02"
   rollout_observed_version: "3.1.1"
 
   # Task 3.8 — Step 2: Catch and correct a change made by hand
@@ -31,7 +31,7 @@ answers:
   # Task 3.8 — Step 3: Roll back with a revert
   # Source: the revert commit's full SHA from `git rev-parse HEAD`, and the `build_version`
   # the first probe reported in the `poe reconcile` record for that commit.
-  rollback_commit: "af041c38c1e3a3d27fe02aa1e375d6854e261705"
+  rollback_commit: "8a05ad0942770494a797c54c57859e8b091a9a16"
   rollback_observed_version: "3.1.0"
 
   # Task 3.8 — Step 4: Set the restart policy and replica count by commit
