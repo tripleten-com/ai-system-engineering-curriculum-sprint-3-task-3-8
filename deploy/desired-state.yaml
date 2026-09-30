@@ -16,7 +16,7 @@
 # `initializer`, which runs the api image. The value must be a tag that
 # infra/release/manifest.yaml names: "3.1.0" (known good) or "3.1.1" (candidate).
 # `poe release-build` builds both from this source so the reconciler can select either.
-release_tag: "3.1.1"
+release_tag: "3.1.0"
 
 api:
   # What Docker does when the api container exits. One of:
