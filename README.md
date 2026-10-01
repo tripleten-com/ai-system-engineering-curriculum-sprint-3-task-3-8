@@ -51,6 +51,10 @@ environment or a local `.env` file (copy `.env.example`) if a default collides w
 already running on your machine. Keep the override in place for every `poe` command; the
 reconciler reads `COLDLINE_API_HOST_PORT` the same way for its readiness probe.
 
+This Task runs as its own Compose project, `coldline-task-3-8`. If an earlier Task's stack is
+still running, run `poe stop` in that Task's repository first; otherwise `poe start` here fails
+because the published ports are already taken.
+
 PostgreSQL, Redis, worker metrics, and OTLP remain inside the Compose network. Codespaces uses the
 same `compose.yaml` and keeps every forwarded port private. Redis keeps running in this Task only
 for an earlier checkpoint's own contract test; no composition root reads it anymore.
