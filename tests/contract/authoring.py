@@ -13,8 +13,9 @@ Tools:             Python 3.12, AST, uv, Docker Compose YAML
 Task 3.8 adds one visible content directory, `deploy/`, which holds the committed desired
 state the supplied reconciler reads from git HEAD. It changes no Compose service, image,
 or profile: the reconciler drives Compose through an environment variable, `--scale`, and
-a generated, git-ignored override, so it keeps Task 3.4's Compose project identity rather
-than isolating a stack that is byte-for-byte the same one, matching Task 3.7's precedent.
+a generated, git-ignored override. It still supplies its own copy of `compose.yaml` under
+its own Compose project name, because a project shared with an earlier Task would let
+either checkout recreate or reset the other's containers and volumes.
 """
 
 from __future__ import annotations
@@ -66,10 +67,12 @@ DISTRIBUTION_NAME = "coldline-task-2-1"
 # Each checkpoint owns its own Compose project so two materializations cannot
 # share containers or volumes. The name is checked, not assumed: a whole-file
 # Compose replacement that forgot to change it would otherwise reconfigure the
-# previous Task's stack. Task 3.8 changes no Compose service, image, or
-# profile either, so it keeps Task 3.4's project identity rather than
-# isolating a stack that is byte-for-byte the same one.
-COMPOSE_PROJECT_NAME = "coldline-task-3-4"
+# previous Task's stack. Task 3.8 supplies its own copy of Task 3.4's
+# compose.yaml under its own name. Even with identical services, the images
+# build from this checkout and the observability configuration is bind-mounted
+# from it, so a shared name would let either checkout's `poe start` recreate,
+# and its `poe reset` delete, the other's containers and volumes.
+COMPOSE_PROJECT_NAME = "coldline-task-3-8"
 TASK_ID = "3.8"
 SCHEMA_FILES = (
     "infra/postgres/001_opening_checkpoint.sql",
